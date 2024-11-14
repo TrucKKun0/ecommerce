@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - ShopEase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="./stylesheet/profile.css">
+</head>
+<body>
+    <div class="container">
+        <h1><%=user.username %>'s Profile</h1>
+        
+        <div class="profile-section">
+            <h2>Personal Information</h2>
+            <p><strong>Name:</strong><%= user.username %> </p>
+            <p><strong>Email:</strong> <%= user.email %> </p>
+            
+            <button onclick="alert('Edit functionality not implemented')">Edit Profile</button>
+        </div>
+
+        <div class="profile-section">
+            <h2>Order History</h2>
+            <div class="order-history">
+                <p><strong>Order #12345</strong> - Date: 2023-05-01</p>
+                <p>Total: $49.98</p>
+                <p>Status: Delivered</p>
+            </div>
+            <div class="order-history">
+                <p><strong>Order #12346</strong> - Date: 2023-05-15</p>
+                <p>Total: $74.97</p>
+                <p>Status: Processing</p>
+            </div>
+        </div>
+
+        <a href="/" class="back-to-store">Back to Store</a>
+    </div>
+
+    <script>
+        // You can add JavaScript here for any profile-related functionality
+    </script>
+</body>
+</html>
