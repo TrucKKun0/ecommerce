@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const app = express();
 const userModel = require('./model/user');
 const path = require('path');
+const productModel = require('./model/products');
 
 
 // Middleware setup
@@ -16,6 +17,7 @@ app.set('view engine', 'ejs');
 
 // Route to render the index page
 app.get('/', (req, res) => {
+  
     res.render('index');
 });
 app.get('/cart', (req, res) => {
