@@ -24,6 +24,7 @@ app.get('/cart', (req, res) => {
     res.render('cart');
 });
 
+app.use(express.static('public'));
 
 
 app.post("/login", async (req, res) => {

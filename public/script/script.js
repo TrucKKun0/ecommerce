@@ -182,6 +182,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+// notification toast
+const notificationToast = document.querySelector('[data-toast]');
+const toastCloseBtn = document.querySelector('[data-toast-close]');
+
+toastCloseBtn.addEventListener('click', function () {
+    notificationToast.classList.add('closed');
+  });
+
     // Initialize all functionalities
     cartManager.updateCartCount();
     authManager.checkLoginState();
