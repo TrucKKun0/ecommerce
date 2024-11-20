@@ -319,6 +319,10 @@ footer {
   display: inline-block;
 }
 
+.footer-section p{
+  width: 80%;
+}
+
 .footer-section h3::after {
   content: "";
   position: absolute;
