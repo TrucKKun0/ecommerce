@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Product Management</title>
+    <link rel="stylesheet" href="/stylesheet/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>Admin Panel</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active"><a href="#"><i class="fas fa-box"></i> Products</a></li>
+                <li><a href="#"><i class="fas fa-users"></i> Users</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <h1>Product Management</h1>
+                <a href="/admin/addProduct" class="button">Add New Product</a>
+            </header>
+
+            <!-- Product List -->
+            <div class="product-list">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search products...">
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% 
+                        
+                            products.forEach(product =>{
+                                %> 
+                                <tr>
+                                    <td><%= product._id %></td>
+                                    <td><img src="/public/images/<%= product.productCategory%>/<%= product.productImage %>"></td>
+                                    <td><%= product.productName %></td>
+                                    <td><%= product.productCategory %></td>
+                                    <td>Rs<%= product.productPrice %> </td>
+                                    <td><%= product.productQuantity %></td>
+                                    <td class="actions">
+                                        <a href="admin/edit/<%=product._id%>">Edit</a>
+                                        <a href="admin/delete/<%= product._id%>">Delete</a>
+                                    </td>
+                                </tr>
+
+
+                                
+                                <%
+                            })
+                        
+                        
+                        %>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    
+    
+</body>
+</html> 

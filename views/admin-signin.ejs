@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Sign In</title>
+    <link rel="stylesheet" href="admin-signin.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheet/admin-signin.css">
+</head>
+<body>
+    <div class="container">
+        <div class="signin-card">
+            <div class="logo">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h2>Admin Login</h2>
+            <form class="signin-form" action="/admin/login" method="POST">
+                <div class="form-group">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="email" placeholder="Email Address" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" placeholder="Password" required>
+                    </div>
+                </div>
+                <div class="remember-forgot">
+                    <label>
+                        <input type="checkbox" name="remember">
+                        Remember me
+                    </label>
+                    <a href="/admin/forgot-password">Forgot Password?</a>
+                </div>
+                <button type="submit" class="signin-btn">Sign In</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html> 

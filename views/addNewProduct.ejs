@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Products</title>
+    <link rel="stylesheet" href="/stylesheet/addNewProduct.css">
+</head>
+<body>
+    <form class="product-form" action="/admin/create" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Product Name</label>
+            <input type="text" placeholder="product-name" name="productName" required>
+        </div>
+        <div class="form-group">
+            <label>Category</label>
+            <input type="text" name="productCategory" placeholder="electronic" required>
+        </div>
+        <div class="form-group">
+            <label>Price</label>
+            <input type="number" name="productPrice"  step="0.01" required>
+        </div>
+        <div class="form-group">
+            <label>Stock Quantity</label>
+            <input type="number" name="productQuantity" required>
+        </div>
+        <div class="form-group">
+            <label>Product Image</label>
+            <input type="file" name="productImage" >
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea rows="4" name="productDescription"></textarea>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="save-btn">Save Product</button>
+            <button type="button" class="cancel-btn">Cancel</button>
+        </div>
+    </form>
+</body>
+</html>

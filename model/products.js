@@ -7,10 +7,12 @@ const productSchema = mongoose.Schema({
     productPrice:Number,
     productDescription:String,
     productImage:String,
+    productQuantity: Number,
     date:{
         type:Date,
         default:Date.now()
-    }
+    },
+    productCategory: String
     
 });
 
