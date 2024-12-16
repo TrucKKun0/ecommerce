@@ -22,10 +22,32 @@ app.use(express.static(path.join(__dirname, 'config')));
 app.set('view engine', 'ejs');
 
 // Route to render the index page
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => { 
   
-    res.render('index');
+  try {
+    let products = await productModel.find();
+
+    const electronics = products.filter(product => product.productCategory === "electronics");
+    const feature = products.filter(product => product.productCategory === "feature");
+    const homeandliving = products.filter(product => product.productCategory === "homeandliving");
+    const sports = products.filter(product => product.productCategory === "sports");
+    const fashion = products.filter(product => product.productCategory === "fashion");
+
+    res.render('index', { 
+      electronics, 
+      feature, 
+      homeandliving, 
+      sports, 
+      fashion 
+    });
+    
+    
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).send("Internal Server Error");
+  }
 });
+
 app.get('/cart', (req, res) => {
     res.render('cart');
 });
@@ -41,6 +63,8 @@ app.post("/login", async (req, res) => {
       if (result) {
         let token = jwt.sign({ email: email, userid: user._id }, "shhhh");
         res.cookie("token", token);
+        
+        
         res.redirect("/");
       } else return res.send("somethingis worng");
     });
@@ -125,7 +149,7 @@ app.post('/admin/create', upload.single("productImage"), async (req, res) => {
       }
       await product.save();
 
-      console.log("Product created:", product);
+      
 
       // Render the template with the updated products array
       res.redirect('/admin');

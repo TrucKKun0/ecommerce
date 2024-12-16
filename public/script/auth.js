@@ -25,3 +25,23 @@ document.querySelector(".sign-up-form").addEventListener("submit", function(e) {
     // Simulate successful registration and redirect to sign in
     container.classList.remove("sign-up-mode");
 });
+
+// Password Toggle Functionality
+document.querySelectorAll('.password-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function() {
+        const passwordInput = this.previousElementSibling;
+        
+        // Toggle password visibility
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            this.classList.add('show');
+            this.classList.remove('fa-eye');
+            this.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            this.classList.remove('show');
+            this.classList.remove('fa-eye-slash');
+            this.classList.add('fa-eye');
+        }
+    });
+});

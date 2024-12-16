@@ -1,32 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    function displayProducts(products, containerId) {
-        const container = document.getElementById(containerId);
-        products.forEach(product => {
-            const productElement = createProductElement(product);
-            container.appendChild(productElement);
-        });
-    }
-
-    function createProductElement(product) {
-        const productDiv = document.createElement('div');
-        productDiv.className = 'product';
-        productDiv.innerHTML = `
-            <img src="${product.image}" alt="${product.name}">
-            <div class="product-info">
-                <h3>${product.name}</h3>
-                <p>${product.description}</p>
-                <p class="price">Rs.${product.price.toFixed(2)}</p>
-                <button class="add-to-cart" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}">Add to Cart</button>
-            </div>
-        `;
-        return productDiv;
-    }
-   
-    displayProducts(featuredProducts, 'featured-product-container');
-    displayProducts(electronicsProducts, 'electronics-product-container');
-    displayProducts(fashionProducts, 'fashion-product-container');
-    displayProducts(sportsProducts, 'sports-product-container');
-    displayProducts(homeLivingProducts, 'home-living-product-container');
+    
 
     // Cart functionality
     const cartManager = {
@@ -76,22 +49,18 @@ document.addEventListener('DOMContentLoaded', function() {
         signupLink: document.getElementById('signup-link'),
         profileLink: document.getElementById('profile-link'),
         signoutLink: document.getElementById('signout-link'),
-        
+    
         checkLoginState: function() {
             const cookies = document.cookie.split(';');
-            console.log("All Cookies:", cookies); // Debugging line
-            for (let cookie of cookies) {
+            console.log("All Cookies:", cookies);
+            this.isLoggedIn = cookies.some(cookie => {
                 const [name, value] = cookie.trim().split('=');
-                console.log(`Cookie name: ${name}, value: ${value}`); // Debugging line
-                if (name === 'token' && value !=='') {
-                    this.isLoggedIn = true;
-                    break;
-                }
-            }
+                console.log(`Cookie name: ${name}, value: ${value}`);
+                return name === 'token' && value !== '';
+            });
             this.updateUIForAuthState();
-        }
-        ,
-        
+        },
+    
         updateUIForAuthState: function() {
             if (this.isLoggedIn) {
                 this.signinLink.style.display = 'none';
@@ -105,20 +74,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.signoutLink.style.display = 'none';
             }
         },
-        
-        login: function() {
-            // This function would be called when the user successfully logs in
-            document.cookie = 'isLoggedIn=true; path=/; max-age=86400'; // Set cookie to expire in 1 day
+    
+        login: function(tokenValue) {
+            document.cookie = `token=${tokenValue}; path=/; max-age=86400`;
             this.isLoggedIn = true;
             this.updateUIForAuthState();
         },
-        
+    
         logout: function() {
-            document.cookie = 'isLoggedIn=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'; // Delete the cookie
+            document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
             this.isLoggedIn = false;
             this.updateUIForAuthState();
         },
-        
+    
         setupEventListeners: function() {
             this.signoutLink.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -126,6 +94,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     };
+    
+    // Initialize
+    authManager.setupEventListeners();
+    authManager.checkLoginState();
+    
 
     // Image slider functionality
     const sliderManager = {
@@ -182,17 +155,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-// notification toast
-const notificationToast = document.querySelector('[data-toast]');
-const toastCloseBtn = document.querySelector('[data-toast-close]');
-
-toastCloseBtn.addEventListener('click', function () {
-    notificationToast.classList.add('closed');
-  });
-
-    // Initialize all functionalities
-    cartManager.updateCartCount();
-    authManager.checkLoginState();
-    authManager.setupEventListeners();
-    sliderManager.init();
 });

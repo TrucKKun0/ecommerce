@@ -30,6 +30,9 @@ nav {
   max-width: 1200px;
   margin: 0 auto;
 }
+.nav-links a {
+  transition: text-decoration 0.3s ease;
+}
 .Flogo {
   width: 250px;
 }
@@ -413,7 +416,7 @@ footer {
 .signup-link,
 .profile-link,
 .signout-link {
-  display: none;
+  display: inline-block;
 }
 
 .signup-link {

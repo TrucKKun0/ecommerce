@@ -85,6 +85,7 @@ form.sign-in-form {
     font-size: 1.1rem;
 }
 
+
 .input-field input {
     background: none;
     outline: none;
@@ -395,6 +396,29 @@ form.sign-in-form {
         bottom: 28%;
         left: 50%;
     }
+}
+
+.input-field {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute !important;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 10;
+    font-size: 1.1rem;
+    color: #acacac;
+}
+
+.password-toggle:hover {
+    color: #4481eb;
+}
+
+.password-toggle.show {
+    color: #4481eb;
 }
 
 

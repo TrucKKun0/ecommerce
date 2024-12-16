@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
 
     <link rel="stylesheet" href="/stylesheet/style.css" />
-    <link rel="stylesheet" href="/stylesheet/" />
+    <
   </head>
   <body>
     <header>
@@ -74,50 +74,104 @@
         <h2>Featured Products</h2>
         <div id="featured-product-container" class="product-container">
           <!-- Featured products will be dynamically inserted here -->
+          <% feature.forEach(product => { %> 
+            <div class="product">
+              <div class="product-image">
+                <img src="/public/images/<%= product.productCategory %>/<%= product.productImage %>" alt="<%= product.productName %>">
+              </div>
+              <div class="product-info">
+                <h3><%= product.productName %></h3>
+                <p><%= product.productDescription %></p>
+                <p class="price">Rs. <%= product.productPrice %></p>
+                <button 
+                  class="add-to-cart" 
+                  data-id="<%= product._id %>" 
+                  data-name="<%= product.productName %>" 
+                  data-price="<%= product.productPrice %>"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          <% }) %>
         </div>
       </section>
-
-      <div class="notification-toast" data-toast>
-        <button class="toast-close-btn" data-toast-close>
-          <ion-icon name="close-outline"></ion-icon>
-        </button>
-
-        <div class="toast-banner">
-          <img
-            src="images/jewellery-3.jpg"
-            alt="Rose Diamond Earrings"
-            width="80"
-            height="70"
-          />
-        </div>
-
-        <div class="toast-detail">
-          <p class="toast-message">Someone in new just bought</p>
-
-          <p class="toast-title">Rose Diamond Earrings</p>
-
-          <p class="toast-meta"><time datetime="PT2M">2 Minutes</time> ago</p>
-        </div>
-      </div>
 
       <section class="product-section electronics-products">
         <h2>Electronics</h2>
         <div id="electronics-product-container" class="product-container">
-          <!-- Electronics products will be dynamically inserted here -->
+          <% electronics.forEach(product => { %> 
+            <div class="product">
+              <div class="product-image">
+                <img src="/public/images/<%= product.productCategory %>/<%= product.productImage %>" alt="<%= product.productName %>">
+              </div>
+              <div class="product-info">
+                <h3><%= product.productName %></h3>
+                <p><%= product.productDescription %></p>
+                <p class="price">Rs. <%= product.productPrice %></p>
+                <button 
+                  class="add-to-cart" 
+                  data-id="<%= product._id %>" 
+                  data-name="<%= product.productName %>" 
+                  data-price="<%= product.productPrice %>"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          <% }) %>
         </div>
       </section>
 
       <section class="product-section fashion-products">
         <h2>Fashion</h2>
         <div id="fashion-product-container" class="product-container">
-          <!-- Fashion products will be dynamically inserted here -->
+          <% fashion.forEach(product => { %> 
+            <div class="product">
+              <div class="product-image">
+                <img src="/public/images/<%= product.productCategory %>/<%= product.productImage %>" alt="<%= product.productName %>">
+              </div>
+              <div class="product-info">
+                <h3><%= product.productName %></h3>
+                <p><%= product.productDescription %></p>
+                <p class="price">Rs. <%= product.productPrice %></p>
+                <button 
+                  class="add-to-cart" 
+                  data-id="<%= product._id %>" 
+                  data-name="<%= product.productName %>" 
+                  data-price="<%= product.productPrice %>"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          <% }) %>
         </div>
       </section>
 
       <section class="product-section sports-products">
         <h2>Sports</h2>
         <div id="sports-product-container" class="product-container">
-          <!-- Sports products will be dynamically inserted here -->
+          <% sports.forEach(product => { %> 
+            <div class="product">
+              <div class="product-image">
+                <img src="/public/images/<%= product.productCategory %>/<%= product.productImage %>" alt="<%= product.productName %>">
+              </div>
+              <div class="product-info">
+                <h3><%= product.productName %></h3>
+                <p><%= product.productDescription %></p>
+                <p class="price">Rs. <%= product.productPrice %></p>
+                <button 
+                  class="add-to-cart" 
+                  data-id="<%= product._id %>" 
+                  data-name="<%= product.productName %>" 
+                  data-price="<%= product.productPrice %>"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          <% }) %>
         </div>
       </section>
 
@@ -125,6 +179,26 @@
         <h2>Home & Living</h2>
         <div id="home-living-product-container" class="product-container">
           <!-- Home & Living products will be dynamically inserted here -->
+          <% homeandliving.forEach(product => { %> 
+            <div class="product">
+              <div class="product-image">
+                <img src="/public/images/<%= product.productCategory %>/<%= product.productImage %>" alt="<%= product.productName %>">
+              </div>
+              <div class="product-info">
+                <h3><%= product.productName %></h3>
+                <p><%= product.productDescription %></p>
+                <p class="price">Rs. <%= product.productPrice %></p>
+                <button 
+                  class="add-to-cart" 
+                  data-id="<%= product._id %>" 
+                  data-name="<%= product.productName %>" 
+                  data-price="<%= product.productPrice %>"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          <% }) %>
         </div>
       </section>
     </main>
@@ -161,11 +235,7 @@
       </div>
     </footer>
 
-    <script src="/script/featuredProducts.js"></script>
-    <script src="/script/electronicsProducts.js"></script>
-    <script src="/script/fashionProducts.js"></script>
-    <script src="/script/sportsProducts.js"></script>
-    <script src="/script/homeLivingProducts.js"></script>
+    
     <script src="/script/script.js"></script>
     <script src="/script/productHover.js"></script>
 

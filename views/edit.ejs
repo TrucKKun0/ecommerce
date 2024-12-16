@@ -3,39 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Product</title>
-    <link rel="stylesheet" href="/stylesheet/edit.css">
+    <title>Edit Product - Admin Panel</title>
+    <link rel="stylesheet" href="/stylesheet/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <form class="product-form" action="/admin/update/<%= products._id %>" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="productName">Product Name</label>
-            <textarea id="productName" name="productName" placeholder="Enter product name"><%= products.productName %></textarea>
-        </div>
-        <div class="form-group">
-            <label for="productCategory">Category</label>
-            <textarea id="productCategory" name="productCategory" placeholder="Enter product category"><%= products.productCategory %></textarea>
-        </div>
-        <div class="form-group">
-            <label for="productPrice">Price</label>
-            <textarea id="productPrice" name="productPrice" placeholder="Enter product price"><%= products.productPrice %></textarea>
-        </div>
-        <div class="form-group">
-            <label for="productQuantity">Stock Quantity</label>
-            <textarea id="productQuantity" name="productQuantity" placeholder="Enter stock quantity"><%= products.productQuantity %></textarea>
-        </div>
-        <div class="form-group">
-            <label for="productQuantity">Update Image</label>
-            <input type="file" name="productImage" >
-        </div>
-        <div class="form-group">
-            <label for="productDescription">Description</label>
-            <textarea id="productDescription" rows="4" name="productDescription" placeholder="Enter product description"><%= products.productDescription %></textarea>
-        </div>
-        <div class="form-actions">
-            <button type="submit" class="save-btn">Update Product</button>
-            <button type="button" class="cancel-btn" onclick="window.location.href='/admin/products';">Cancel</button>
-        </div>
-    </form>
+    <div class="admin-container">
+        <!-- Same sidebar as other pages -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2><i class="fas fa-shield-alt"></i> Admin Panel</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active"><a href="/admin"><i class="fas fa-box"></i> Products</a></li>
+                <li><a href="#"><i class="fas fa-users"></i> Users</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h1><i class="fas fa-edit"></i> Edit Product</h1>
+                <a href="/admin" class="button secondary"><i class="fas fa-arrow-left"></i> Back to Products</a>
+            </header>
+
+            <div class="form-container">
+                <form class="product-form" action="/admin/update/<%= products._id %>" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Product Name</label>
+                        <input type="text" name="productName" value="<%= products.productName %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-list"></i> Category</label>
+                        <textarea id="productCategory" name="productCategory" placeholder="Enter product category"><%= products.productCategory %></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-dollar-sign"></i> Price</label>
+                        <textarea id="productPrice" name="productPrice" placeholder="Enter product price"><%= products.productPrice %></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-cubes"></i> Stock Quantity</label>
+                        <textarea id="productQuantity" name="productQuantity" placeholder="Enter stock quantity"><%= products.productQuantity %></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-image"></i> Update Image</label>
+                        <input type="file" name="productImage" >
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-align-left"></i> Description</label>
+                        <textarea id="productDescription" rows="4" name="productDescription" placeholder="Enter product description"><%= products.productDescription %></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="button"><i class="fas fa-save"></i> Update Product</button>
+                        <button type="button" class="button secondary" onclick="window.location.href='/admin';"><i class="fas fa-times"></i> Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
 </body>
 </html>
