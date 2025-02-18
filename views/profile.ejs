@@ -24,16 +24,18 @@
 
         <div class="profile-section">
             <h2>Order History</h2>
-            <div class="order-history">
-                <p><strong>Order #12345</strong> - Date: 2023-05-01</p>
-                <p>Total: $49.98</p>
-                <p>Status: Delivered</p>
-            </div>
-            <div class="order-history">
-                <p><strong>Order #12346</strong> - Date: 2023-05-15</p>
-                <p>Total: $74.97</p>
-                <p>Status: Processing</p>
-            </div>
+            <% user.order.forEach(order => { %>
+                <div class="order-history">
+                    <p><strong>OrderId <%= order._id %></strong> - Date: <%= order.date%></p>
+                   <% user.cart.forEach (item =>{%>
+                    
+                       <p>Total: Rs <%= item.totalPrice %></p>
+                       <p>items: </p>
+                   <%}) %>
+                </div>
+              <% }); %>
+            
+            
         </div>
 
         <a href="/" class="back-to-store">Back to Store</a>

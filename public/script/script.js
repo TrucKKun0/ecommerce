@@ -1,21 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-    
 
     // Cart functionality
     const cartManager = {
         cart: JSON.parse(localStorage.getItem('cart')) || [],
-        
-        updateCartCount: function() {
-            const cartCount = document.querySelector('.cart-count');
-            if (cartCount) {
-                cartCount.textContent = this.cart.length;
-                if (this.cart.length > 0) {
-                    cartCount.classList.add('visible');
-                } else {
-                    cartCount.classList.remove('visible');
-                }
-            }
-        },
         
         saveCart: function() {
             localStorage.setItem('cart', JSON.stringify(this.cart));
@@ -23,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         addToCart: function(item) {
             this.cart.push(item);
-            this.updateCartCount();
             this.saveCart();
         }
     };
@@ -38,7 +24,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 price: parseFloat(button.getAttribute('data-price'))
             };
             cartManager.addToCart(item);
-            
+    
+            // Send only the name to the backend
+            const productName = button.getAttribute('data-name');
+            if (productName) {
+                fetch('/cart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ productName }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Error: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Response from backend:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error sending name to backend:', error);
+                    });
+            } else {
+                console.error('Product name is undefined.');
+            }
         }
     });
 
@@ -155,4 +166,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    sliderManager.init();
 });
+
+
+
+const searchBtn = document.getElementById('searchBtn').addEventListener('click', function () {
+    const searchData = document.getElementById('searchItem').value;
+    console.log('Search data:', searchData);
+  
+    // Send a GET request with the search term as a query parameter
+    fetch(`/search?q=${encodeURIComponent(searchData)}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+        
+      })
+      .then(data => {
+        console.log('Response from backend:', data);
+        
+      })
+      .catch(error => {
+        console.error('Error sending search request:', error);
+      });
+  });
