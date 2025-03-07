@@ -58,7 +58,7 @@ body {
     margin-right: 10px;
 }
 
-.nav-links li.active a,
+
 .nav-links a:hover {
     background: var(--primary-color);
     color: white;

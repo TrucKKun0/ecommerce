@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Manage Orders</title>
+    <link rel="stylesheet" href="/stylesheet/manageOrder.css">
+    <link rel="stylesheet" href="/stylesheet/admin.css">
+</head>
+<body>
+    
+    <%- include('sidebar') %>
+    <main>
+        <h2>Manage Orders</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>User</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% orders.forEach(order => { %>
+                <tr>
+                    <td><%= order._id %></td>
+                    <td><%= order.userid ? order.userid.username : 'Unknown User' %></td>
+                    <td>
+                        <select class="status-select" data-id="<%= order._id %>">
+                            <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %> >Pending</option>
+                            <option value="Confirmed" <%= order.status === 'Confirmed' ? 'selected' : '' %>>Confirmed</option>
+                          
+                        </select>
+                    </td>
+                    <td>
+                        <button class="update-btn" data-id="<%= order._id %>">Update</button>
+                        <button class="cancel-btn" data-id="<%= order._id %>">Cancel</button>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </main>
+
+    <script>
+        document.querySelectorAll('.update-btn').forEach(button => {
+            button.addEventListener('click', async function () {
+                const userid = this.getAttribute('data-id');
+                const status = document.querySelector(`.status-select[data-id="${userid}"]`).value;
+
+                const response = await fetch('/admin/update-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userid, status })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('Order updated successfully');
+                    location.reload();
+                } else {
+                    alert('Error updating order');
+                }
+            });
+        });
+
+        document.querySelectorAll('.cancel-btn').forEach(button => {
+            button.addEventListener('click', async function () {
+                const userid = this.getAttribute('data-id');
+
+                if (!confirm('Are you sure you want to cancel this order?')) return;
+
+                const response = await fetch('/admin/cancel-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userid })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('Order cancelled successfully');
+                    location.reload();
+                } else {
+                    alert('Error cancelling order');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<header>
+    
+    <nav>
+      <img src="images/logo7.png" alt="logo" class="Flogo">
+      
+      <div class="search-container">
+        <input type="text" id="searchItem" name="q" placeholder="Search products..." />
+        <button id="searchBtn">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+  
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="#products">Products</a>
+        <a href="#footer">About</a>
+        <a href="/cart" class="cart-icon">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count <%= cartCount > 0 ? 'visible' : '' %>">
+            <%= cartCount %>
+          </span>
+        </a>
+      
+        <a href="/profile/_id" id="profile-link" >Profile</a>
+        <a href="/logout" id="signout-link" >Sign Out</a>
+      </div>
+    </nav>
+  </header>
+  

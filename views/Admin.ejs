@@ -6,23 +6,11 @@
     <title>Admin Panel - Product Management</title>
     <link rel="stylesheet" href="/stylesheet/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/stylesheet/admin.css">
 </head>
 <body>
     <div class="admin-container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="logo">
-                <h2><i class="fas fa-shield-alt"></i> Admin Panel</h2>
-            </div>
-            <ul class="nav-links">
-                <li class="active"><a href="/admin"><i class="fas fa-box"></i> Products</a></li>
-                <li><a href="#"><i class="fas fa-users"></i> Users</a></li>
-                <li class="signout"><a href="/admin/signout"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
-            </ul>
-        </nav>
+        <%- include('sidebar') %>
 
-        <!-- Main Content -->
         <main class="main-content">
             <header class="content-header">
                 <h1><i class="fas fa-box"></i> Product Management</h1>
@@ -34,7 +22,6 @@
                 <input type="text" id="productSearch" placeholder="Search products...">
             </div>
 
-            <!-- Product List -->
             <div class="product-list">
                 <table>
                     <thead>
@@ -50,7 +37,6 @@
                     </thead>
                     <tbody>
                         <% 
-                        
                             products.forEach(product =>{
                                 %> 
                                 <tr>
@@ -65,21 +51,13 @@
                                         <a href="admin/delete/<%= product._id%>">Delete</a>
                                     </td>
                                 </tr>
-
-
-                                
                                 <%
                             })
-                        
-                        
                         %>
                     </tbody>
                 </table>
             </div>
         </main>
     </div>
-
-    
-    
 </body>
-</html> 
+</html>

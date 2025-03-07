@@ -2,42 +2,55 @@
 
 // Function to handle increase/decrease in quantity
 function handleQuantityChange(isIncrease, productId) {
-    // Select the input field for the specific product
     const input = document.querySelector(`.Quantity[data-id="${productId}"]`);
     let quantity = parseInt(input.value, 10);
+    let productPrice = parseFloat(input.dataset.price); // Convert price to number
 
-    // Update quantity based on action
+    console.log(`Product ID: ${productId}, Price: ${productPrice}, Initial Quantity: ${quantity}`);
+
+    // Validate productPrice
+    if (isNaN(productPrice)) {
+        console.error(`Error: productPrice is NaN for product ID ${productId}`);
+        productPrice = 0; // Default to 0 to prevent NaN errors
+    }
+
     if (isIncrease) {
         quantity++;
     } else if (quantity > 1) {
         quantity--;
     }
 
-    // Update input field value
     input.value = quantity;
 
-    // Send the updated quantity to the backend
-    sendQuantityToBackend(productId, quantity);
+    // Validate quantity
+    if (isNaN(quantity) || quantity < 1) {
+        quantity = 1;
+        input.value = quantity;
+    }
+
+    const subtotal = productPrice * quantity;
+    
+    console.log(`Updated Quantity: ${quantity}, Subtotal: ${subtotal}`);
+    sendQuantityToBackend(productId, quantity, subtotal);
 }
 
 // Function to send updated quantity to the backend
-async function sendQuantityToBackend(productId, newQuantity) {
+async function sendQuantityToBackend(productId, newQuantity, newPrice) {
     try {
+        console.log(`Sending Data - Product ID: ${productId}, Quantity: ${newQuantity}, Price: ${newPrice}`);
+
+        if (isNaN(newPrice)) {
+            console.error(`Error: newPrice is NaN for product ID ${productId}`);
+            newPrice = 0; // Default to 0 to prevent errors
+        }
+
         const response = await fetch('/update-quantity', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                productId: productId,
-                quantity: newQuantity,
-            }),
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId, quantity: newQuantity, price: newPrice }),
         });
 
-        // Handle response
-        if (!response.ok) {
-            throw new Error('Failed to update quantity');
-        }
+        if (!response.ok) throw new Error('Failed to update quantity');
 
         const data = await response.json();
         console.log('Quantity updated successfully:', data);
@@ -48,7 +61,6 @@ async function sendQuantityToBackend(productId, newQuantity) {
 
 // Add event listeners after DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
-    // Add event listeners for increase buttons
     document.querySelectorAll(".js-increase").forEach(button => {
         button.addEventListener("click", () => {
             const productId = button.dataset.id;
@@ -56,7 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Add event listeners for decrease buttons
     document.querySelectorAll(".js-decrease").forEach(button => {
         button.addEventListener("click", () => {
             const productId = button.dataset.id;
@@ -64,20 +75,25 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Optional: Sync input changes if the user edits the quantity manually
+    // Sync input changes when user manually edits quantity
     document.querySelectorAll(".Quantity").forEach(input => {
         input.addEventListener("input", () => {
             const productId = input.dataset.id;
             let quantity = parseInt(input.value, 10);
+            let productPrice = parseFloat(input.dataset.price); // Convert price to number
 
-            // Validate input and prevent invalid values
             if (isNaN(quantity) || quantity < 1) {
-                quantity = 1; // Reset to minimum quantity
+                quantity = 1;
                 input.value = quantity;
             }
 
-            // Send the updated quantity to the backend
-            sendQuantityToBackend(productId, quantity);
+            if (isNaN(productPrice)) {
+                console.error(`Error: productPrice is NaN for product ID ${productId}`);
+                productPrice = 0; // Default to 0 to prevent errors
+            }
+
+            const subtotal = productPrice * quantity;
+            sendQuantityToBackend(productId, quantity, subtotal);
         });
     });
 });

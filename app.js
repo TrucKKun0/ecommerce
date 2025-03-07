@@ -1,5 +1,4 @@
 const cookieParser = require('cookie-parser');
-
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -14,7 +13,7 @@ const productModel = require('./model/products');
 const upload = require('./config/multerconfig.js');
 const expressSession = require("express-session");
 const flash = require("connect-flash");
-const { log } = require('console');
+
 require("dotenv").config();
 
 app.use(
@@ -36,7 +35,7 @@ app.use(express.static(path.join(__dirname, 'config')));
 app.set('view engine', 'ejs');
 
 // Route to render the index page
-app.get('/', async (req, res) => {
+app.get('/', isLoggedIn,async (req, res) => {
   try {
       // Fetch all products
       let products = await productModel.find();
@@ -81,24 +80,34 @@ app.get('/', async (req, res) => {
   }
 });
 
-app.get('/search', async (req, res) => {
-  const { q } = req.query; // Extract the search term from the query string
+app.get('/search', isLoggedIn,async (req, res) => {
+  const token = req.cookies.token;
+      const decoded = jwt.verify(token, 'shhhh');
+      const email = decoded.email;
+  let { q } = req.query;
   console.log('Search query:', q);
-
-  if (!q) {
+  const user = await userModel.findOne({ email }).populate('cart');
+      const cartCount = user && user.cart ? user.cart.length : 0; 
+  if (!q || !q.trim()) {
     return res.status(400).json({ success: false, message: 'Search term is required' });
   }
 
+  q = q.trim();
+
   try {
-    const products = await productModel.find({ productName: q }); // Search for products
-    console.log('Products:', products);
-    
-    res.status(200).render('searchPage',{products});
+    const products = await productModel.find({
+      productName: { $regex: new RegExp(q, 'i') }
+    });
+
+    console.log('Products being sent to searchPage:', products);
+    res.render('searchPage', { products, q,cartCount });
+
   } catch (error) {
     console.error('Error searching for products:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
+
 app.get('/cart', isLoggedIn, async (req, res) => {
   try {
       // Fetch the user and populate the cart with product details
@@ -135,7 +144,7 @@ app.get('/cart', isLoggedIn, async (req, res) => {
 });
 
 
-app.get('/cart/remove/:productId', isLoggedIn,async (req, res) => {
+app.get('/cart/remove/:productId', isLoggedIn, async (req, res) => {
   try {
       const productId = req.params.productId;
 
@@ -146,16 +155,18 @@ app.get('/cart/remove/:productId', isLoggedIn,async (req, res) => {
           return res.status(404).send('User not found');
       }
 
-      // Remove the product from the cart
+      // Remove the product from the user's cart
       user.cart = user.cart.filter(item => item.toString() !== productId);
-
-      // Save the updated user
+      
+      // Save the updated user data
       await user.save();
 
-      // Redirect back to the cart page
+      // Remove the product from cartModel
+      await cartModel.deleteOne({ productId });
+
       res.redirect('/cart');
   } catch (error) {
-      console.error(error);
+      console.error('Error removing item from cart:', error);
       res.status(500).send('Server error');
   }
 });
@@ -163,7 +174,6 @@ app.get('/cart/remove/:productId', isLoggedIn,async (req, res) => {
 
 
 app.post('/cart', isLoggedIn, async (req, res) => {
-
   try {
       // Find the user
       let user = await userModel.findOne({ email: req.user.email });
@@ -183,12 +193,29 @@ app.post('/cart', isLoggedIn, async (req, res) => {
           user.cart = [];
       }
 
-      // Add product to the user's cart
-      user.cart.push(product._id);
+      // Add product to the user's cart if not already added
+      if (!user.cart.includes(product._id.toString())) {
+          user.cart.push(product._id);
+          await user.save(); // Save the updated user cart
+      }
 
-      // Save the updated user
-      await user.save();
+      // Check if the product already exists in `cartModel`
+      let cartItem = await cartModel.findOne({ userId: user._id, productId: product._id });
 
+      if (cartItem) {
+          // If product already exists in cart, increase the quantity
+          cartItem.quantity += 1;
+          cartItem.total = cartItem.quantity * product.price; // Update total price
+          await cartItem.save();
+      } else {
+          // If product is not in cart, create a new entry
+          await cartModel.create({
+              userId: user._id,
+              productId: product._id,
+              quantity: 1,
+              total: product.price, // Initial price * quantity (1)
+          });
+      }
 
       res.status(200).send('Product added to cart successfully');
   } catch (err) {
@@ -197,45 +224,48 @@ app.post('/cart', isLoggedIn, async (req, res) => {
   }
 });
 
-app.post('/update-quantity', isLoggedIn, async (req, res) => {
-  const { productId, quantity } = req.body;
 
-  // Validate inputs
-  if (!productId || !quantity || quantity < 1) {
-      return res.status(400).send('Invalid productId or quantity');
-  }
-
+app.post('/update-quantity', async (req, res) => {
   try {
-      // Find user
-      const user = await userModel.findOne({ email: req.user.email });
-      if (!user) {
-          return res.status(404).send('User not found');
+      console.log("Incoming Data:", req.body);
+
+      let { productId, quantity, price } = req.body;
+      quantity = parseInt(quantity, 10);
+      price = parseFloat(price);
+
+      if (isNaN(quantity) || quantity < 1) {
+          return res.status(400).json({ error: 'Invalid quantity' });
       }
 
-      // Find product
-      const product = await productModel.findById(productId);
-      if (!product) {
-          return res.status(404).send('Product not found');
+      if (isNaN(price) || price < 0) {
+          return res.status(400).json({ error: 'Invalid price' });
       }
 
-      // Calculate subtotal and total
-      const subtotal = product.productPrice * quantity;
-      const total = subtotal + 100;
+      const total = price * quantity;
 
-      // Update or create cart item
-      const cart = await cartModel.findOneAndUpdate(
-          { productid: product._id, userid: user._id },
-          { $set: { quantity, subtotal, total } },
-          { new: true, upsert: true }
-      );
-console.log(cart);
+      if (isNaN(total)) {
+          return res.status(400).json({ error: 'Invalid total' });
+      }
 
-      res.status(200).send({ message: 'Product added/updated in cart successfully', cart });
+      // Update the specific cart item
+      const cart = await cartModel.updateOne({ productid:productId }, { $set: { quantity, total } });
+      console.log('Cart:', cart);
+      
+
+      // Get the updated total cart value
+      const cartItems = await cartModel.find({});
+      console.log('Cart Items:', cartItems);
+      
+      const cartTotal = cartItems.reduce((sum, item) => sum + item.total, 0);
+      console.log('Cart Total:', cartTotal);
+      
+      res.json({ success: true, cartTotal });
   } catch (error) {
       console.error('Error updating quantity:', error);
-      res.status(500).send('Internal server error');
+      res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 
 app.get('/checkout',isLoggedIn,async (req,res)=>{
@@ -276,10 +306,10 @@ app.post("/order/:userid", isLoggedIn, async (req, res) => {
     });
 
     // Associate the order with the user
-    user.order.push(order._id); // Push the order ID
-    await user.save(); // Save the updated user document
-
-    // Flash success message and redirect
+    user.order.push(order._id); 
+    user.cart = []; // Clear the cart after placing the order
+    await user.save(); 
+    
     req.flash("success", "Order created successfully");
     return res.redirect("/"); // Redirect to the homepage or a success page
   } catch (error) {
@@ -336,7 +366,7 @@ app.get('/logout', (req, res) => {
     res.cookie("token", "");
     res.redirect('/');
 });
-app.get('/profile', isLoggedIn,async (req, res) => {
+app.get('/profile/:userid', isLoggedIn,async (req, res) => {
   let user = await userModel.findOne({ email: req.user.email }).populate("cart").populate("order");
   
   const subtotal = user.cart.reduce((sum, item) => {
@@ -463,7 +493,7 @@ app.get('/admin/signup',(req,res)=>{
   res.render('admin-signup');
 });
 app.get('/admin/signout',(req,res)=>{
-  res.cookie("token", "");
+  res.cookie("atoken", "");
     res.redirect('/admin');
 });
 
@@ -482,8 +512,8 @@ app.post("/admin/signup", async (req, res) => {
         email,
         password: hash,
       });
-      let token = jwt.sign({ email: email, adminid: admin._id }, "shhhh");
-      res.cookie("token", token);
+      let atoken = jwt.sign({ email: email, adminid: admin._id }, "shhhh");
+      res.cookie("atoken", atoken);
       res.redirect('/admin');
     });
   });
@@ -495,19 +525,57 @@ app.post('/admin/login',async (req,res)=>{
   if (!admin) return res.status(500).send("Somthing went wrong");
   bcrypt.compare(password, admin.password, (err, result) => {
     if (result) {
-      let token = jwt.sign({ email: email, adminid: admin._id }, "shhhh");
-      res.cookie("token", token);
+      let atoken = jwt.sign({ email: email, adminid: admin._id }, "shhhh");
+      res.cookie("atoken", atoken);
       res.redirect("/admin");
     } else return res.send("somethingis worng");
   });
 });
 
-//Middleware for admin
+app.get('/admin/order', async (req, res) => {
+  try {
+    // Fetch all orders and populate the "userid" field
+    const orders = await checkoutModel.find().populate({
+      path: "userid",
+     select: "username cart",
+    });
+    //res.json(orders);
+    
+    
+     res.render("manageOrder",{orders}) // Send populated orders as JSON
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post('/admin/update-order', async (req, res) => {
+  try {
+      const { userid, status } = req.body;
+      await checkoutModel.findByIdAndUpdate(userid, { status });
+
+      res.json({ success: true, message: 'Order status updated' });
+  } catch (error) {
+      res.status(500).json({ success: false, message: 'Error updating order' });
+  }
+});
+app.post('/admin/cancel-order', async (req, res) => {
+  try {
+      const { userid } = req.body;
+      await checkoutModel.findByIdAndUpdate(userid, { status: 'Cancelled' });
+
+      res.json({ success: true, message: 'Order cancelled' });
+  } catch (error) {
+      res.status(500).json({ success: false, message: 'Error cancelling order' });
+  }
+});
+
+//Middleware for admin  
 
 function adminLoggedIn(req,res,next) {
-  if (req.cookies.token === "") res.redirect("/admin/signin");
+  if (req.cookies.atoken === "") res.redirect("/admin/signin");
     else {
-      let data = jwt.verify(req.cookies.token, "shhhh");
+      let data = jwt.verify(req.cookies.atoken, "shhhh");
   
       req.admin = data;
       next();

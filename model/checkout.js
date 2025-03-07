@@ -14,7 +14,11 @@ const checkoutSchema =  mongoose.Schema({
     date:{
         type:Date,
         default:Date.now()
-    }
+    },status:{
+        type:String,
+        enum:["Pending","Confirmed"],
+        default:"Pending"
+    },
 });
 
 module.exports = mongoose.model("checkout",checkoutSchema);

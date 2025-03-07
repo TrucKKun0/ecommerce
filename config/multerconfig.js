@@ -6,7 +6,7 @@ const fs = require("fs");
 // Dynamic storage configuration
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const { productCategory } = req.body; // Assuming the product category is sent in the request body
+        const  {productCategory}  = req.body; // Assuming the product category is sent in the request body
         const uploadPath = path.join(__dirname, "public/images", productCategory);
         
         // Ensure the directory exists

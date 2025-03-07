@@ -5,39 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Search Results Page</title>
   <link rel="stylesheet" href="/stylesheet/searchPage.css">
+  <link rel="stylesheet" href="/stylesheet/partial.css">
+  <link rel="shortcut icon" href="images/Favicon/shopease.png" type="image/x-icon"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
 </head>
 <body>
-  <header>
-    <div class="search-bar">
-      <input type="text" placeholder="Search for items..." value="Sneakers">
-      <button>Search</button>
-    </div>
-    <div class="breadcrumbs">
-      <span>Home</span> > <span>Search Results</span> > <span>Sneakers</span>
-    </div>
-  </header>
+  <%- include('header') %>
 
   <main>
-    <aside class="filters-sidebar">
-      <h3>Filters</h3>
-      <div class="filter-section">
-        <h4>Price Range</h4>
-        <input type="range" min="0" max="500" value="250">
-      </div>
-      <div class="filter-section">
-        <h4>Brand</h4>
-        <label><input type="checkbox"> Nike</label>
-        <label><input type="checkbox"> Adidas</label>
-        <label><input type="checkbox"> Puma</label>
-      </div>
-      <div class="filter-section">
-        <h4>Size</h4>
-        <label><input type="checkbox"> 6</label>
-        <label><input type="checkbox"> 7</label>
-        <label><input type="checkbox"> 8</label>
-      </div>
-    </aside>
-
     <section class="product-results">
       <div class="sort-options">
         <label for="sort">Sort By:</label>
@@ -47,44 +22,41 @@
           <option value="price-high-to-low">Price: High to Low</option>
           <option value="best-selling">Best Selling</option>
         </select>
-        <button class="view-toggle">Grid View</button>
+        
       </div>
 
       <div class="product-grid">
-        <div class="product-card">
-          <img src="https://via.placeholder.com/150" alt="Product Image">
-          <h3>Running Sneakers</h3>
-          <p>$49.99</p>
-          <button>Add to Cart</button>
-        </div>
-        <div class="product-card">
-          <img src="https://via.placeholder.com/150" alt="Product Image">
-          <h3>Casual Sneakers</h3>
-          <p>$59.99</p>
-          <button>Add to Cart</button>
-        </div>
-        <div class="product-card">
-          <img src="https://via.placeholder.com/150" alt="Product Image">
-          <h3>Sports Sneakers</h3>
-          <p>$79.99</p>
-          <button>Add to Cart</button>
-        </div>
-        <!-- Add more product cards here -->
+        <% if (products.length > 0) { %>
+          <% products.forEach(function(product) { %>
+            <div class="product-card">
+              <img src="/public/images/<%= product.productCategory %>/<%= product.productImage %>" alt="Product Image">
+              <h3><%= product.productName %></h3>
+              <p>Rs <%= product.productPrice %></p>
+              <div class="button">
+                <button class="add-to-cart" onclick="reloadPage()" data-id="<%= product._id %>" 
+                  data-name="<%= product.productName %>" 
+                  data-price="<%= product.productPrice %>">ADD TO CART</button>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <h2>No products found</h2>
+        <% } %>
+        
+          
+        
+        
       </div>
     </section>
   </main>
 
-  <footer>
-    <div class="related-searches">
-      <h3>Related Searches</h3>
-      <a href="#">Running Shoes</a>, <a href="#">Casual Sneakers</a>
-    </div>
-    <div class="popular-brands">
-      <h3>Popular Brands</h3>
-      <img src="https://via.placeholder.com/50" alt="Nike">
-      <img src="https://via.placeholder.com/50" alt="Adidas">
-      <img src="https://via.placeholder.com/50" alt="Puma">
-    </div>
-  </footer>
+  <%- include('footer') %>
 </body>
+<script src="/script/script.js"></script>
+<script>
+  function reloadPage() {
+    location.reload();
+  }
+</script>
+
 </html>
